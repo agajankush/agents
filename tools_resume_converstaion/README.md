@@ -1,4 +1,3 @@
-````markdown
 # 🤖 Resume AI Chatbot: Your Personal Digital Twin
 
 ---
@@ -197,4 +196,3 @@ Feel free to fork this repository, open issues, and submit pull requests to impr
 ## 📄 License
 
 This project is open-source and available under the MIT License.
-````

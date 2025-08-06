@@ -70,11 +70,11 @@ GOOGLE_API_KEY="your_google_api_key_here"
 
 ```
 
-reader = PdfReader("ashutosh/Ashutosh_Gajankush.pdf") \# Update this path
+reader = PdfReader("../data/resume/Ashutosh_Gajankush.pdf") \# Update this path
 
 # ...
 
-with open("me/summary.txt", "r", encoding="utf-8") as f: \# Update this path
+with open("../data/resume/summary.txt", "r", encoding="utf-8") as f: \# Update this path
 
 ```
 

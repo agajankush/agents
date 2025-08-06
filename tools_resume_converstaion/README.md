@@ -102,9 +102,9 @@ Follow these steps to set up and run your own Resume AI Chatbot.
     **Adjust the file paths in the script** if your files are located elsewhere:
 
     ```python
-    reader = PdfReader("ashutosh/Ashutosh_Gajankush.pdf") # Update this path
+    reader = PdfReader("../data/resume/Ashutosh_Gajankush.pdf") # Update this path
     # ...
-    with open("ashutosh/summary.txt", "r", encoding="utf-8") as f: # Update this path
+    with open("../data/resume/summary.txt", "r", encoding="utf-8") as f: # Update this path
     ```
 
 3.  **Set your Name:**

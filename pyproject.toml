@@ -1,0 +1,20 @@
+[project]
+name = "agents"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastapi>=0.116.1",
+    "gradio>=5.41.0",
+    "openai>=1.99.1",
+    "openai-agents>=0.2.4",
+    "pypdf>=5.9.0",
+    "requests>=2.32.4",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.30.1",
+]

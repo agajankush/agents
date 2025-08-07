@@ -4,6 +4,7 @@ app_file: app.py
 sdk: gradio
 sdk_version: 5.41.0
 ---
+
 # 🤖 Resume AI Chatbot: Your Personal Digital Twin
 
 ---
@@ -108,9 +109,9 @@ Follow these steps to set up and run your own Resume AI Chatbot.
     **Adjust the file paths in the script** if your files are located elsewhere:
 
     ```python
-    reader = PdfReader("../data/resume/Ashutosh_Gajankush.pdf") # Update this path
+    reader = PdfReader("data/resume/Ashutosh_Gajankush.pdf") # Update this path
     # ...
-    with open("../data/resume/summary.txt", "r", encoding="utf-8") as f: # Update this path
+    with open("data/resume/summary.txt", "r", encoding="utf-8") as f: # Update this path
     ```
 
 3.  **Set your Name:**

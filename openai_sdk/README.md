@@ -74,6 +74,53 @@ This project is structured around two key notebooks, each demonstrating a core c
   )
   ```
 
+### 3. Input Guardrails
+
+**Guardrails** are safety checks that are applied to an agent's input to prevent it from performing unwanted or unsafe actions. In this project, we implement a guardrail to stop the agent if a personal name is included in the initial request, enhancing the safety and compliance of the system.
+
+**Key Implementations:**
+
+- **Pydantic Model for Structured Output**: We first define a `Pydantic` model to ensure that our guardrail's check produces a reliable, structured output. This model dictates that the check must return a boolean (`is_name_in_message`) and the name that was found.
+
+  ```python
+  # From guardrails.ipynb
+  class NameCheckOutput(BaseModel):
+      is_name_in_message: bool
+      name: str
+  ```
+
+- **The Guardrail Agent**: A specialized agent (`Name check`) is created with the sole purpose of checking the input message. Its `output_type` is set to our `NameCheckOutput` Pydantic model to enforce the structure.
+
+- **The Guardrail Function**: We create a function decorated with `@input_guardrail`. This function runs our "Name check" agent on the user's message. Based on the structured output, it returns a `GuardrailFunctionOutput`. This special object tells the SDK whether to trigger the tripwire. If triggered, it immediately stops the main agent's execution and raises an exception.
+
+  ```python
+  # From guardrails.ipynb
+  @input_guardrail
+  async def guardrail_against_name(ctx, agent, message):
+      result = await Runner.run(guardrail_agent, message, context=ctx.context)
+      is_name_in_message = result.final_output.is_name_in_message
+      return GuardrailFunctionOutput(
+          output_info={"found_name": result.final_output},
+          tripwire_triggered=is_name_in_message
+      )
+  ```
+
+- **Attaching the Guardrail**: Finally, the guardrail function is attached to our main "Sales Manager" agent via the `input_guardrails` list. Now, before the manager agent even begins its primary task, this guardrail will run, ensuring no personal names are processed.
+
+  ```python
+  # From guardrails.ipynb
+  careful_sales_manager = Agent(
+      name = "Sales Manager",
+      instructions = sales_manager_instructions,
+      tools=[tool1, tool2, tool3],
+      model="gpt-4o-mini",
+      handoffs=[handoff_push_agent],
+      input_guardrails=[guardrail_against_name]
+  )
+  ```
+
+---
+
 ---
 
 ## Getting Started
@@ -85,7 +132,7 @@ Follow these steps to run the project on your local machine.
 Install the necessary Python libraries.
 
 ```bash
-pip install python-dotenv requests openai agents
+pip install python-dotenv requests openai agents pydantic
 ```
 
 ### 2. Configuration
@@ -95,6 +142,7 @@ Create a .env file in the root directory of the project. You will need to add yo
 ```bash
 PUSHOVER_TOKEN=your_pushover_api_token
 PUSHOVER_USER=your_pushover_user_key
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### 3. Running the Notebooks
@@ -103,3 +151,4 @@ Open and execute the cells in the Jupyter notebooks to see the concepts in actio
 
 1. **openai_sdk/agent.ipynb:** Demonstrates the fundamentals of creating and using tools.
 2. **openai_sdk/handoffs.ipynb:** Builds on the first notebook to show how to implement a multi-step workflow with handoffs.
+3. **guardrails.ipynb:** The final version combining all concepts to create a robust, multi-agent system with safety checks.

@@ -1,0 +1,1 @@
+{"name":"Cognizant","ticker":"CTSH","reason":"Cognizant was chosen due to its strong market position in IT services, consistent revenue growth, and strategic expansion into AI and cloud technologies, making it an attractive long-term investment."}

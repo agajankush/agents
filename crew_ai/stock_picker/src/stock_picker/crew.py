@@ -5,6 +5,9 @@ from typing import List
 from pydantic import BaseModel, Field
 from crewai_tools import SerperDevTool
 from stock_picker.tools.push_tool import PushNotificationTool
+from crewai.memory import ShortTermMemory, LongTermMemory, EntityMemory
+from crewai.memory.storage.rag_storage import RAGStorage
+from crewai.memory.storage.ltm_sqlite_storage import LTMSQLiteStorage
 
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -37,17 +40,17 @@ class StockPicker():
     @agent
     def trending_company_finder(self) -> Agent:
         """Trending company finder agent"""
-        return Agent(config=self.agents_config['trending_company_finder'], verbose=True, tools=[SerperDevTool()])
+        return Agent(config=self.agents_config['trending_company_finder'], tools=[SerperDevTool()], memory=True)
     
     @agent
     def financial_researcher(self) -> Agent:
         """Financial researcher agent"""
-        return Agent(config=self.agents_config['financial_researcher'], verbose=True)
+        return Agent(config=self.agents_config['financial_researcher'], tools=[SerperDevTool()])
     
     @agent
     def stock_picker(self) -> Agent:
         """Stock picker agent"""
-        return Agent(config=self.agents_config['stock_picker'], tools=[PushNotificationTool()])
+        return Agent(config=self.agents_config['stock_picker'], tools=[PushNotificationTool()], memory=True)
     
     @task
     def find_trending_companies(self) -> Task:
@@ -62,7 +65,7 @@ class StockPicker():
     @task
     def pick_best_company(self) -> Task:
         """Pick best company task"""
-        return Task(config=self.tasks_config['pick_best_company'], output_pydantic=TrendingCompany)
+        return Task(config=self.tasks_config['pick_best_company'])
     
     @crew
     def crew(self) -> Crew:
@@ -73,6 +76,35 @@ class StockPicker():
             tasks=self.tasks,
             process=Process.sequential,
             manager_agent=manager,
-            verbose=True
+            verbose=True,
+            long_term_memory = LongTermMemory(
+                storage=LTMSQLiteStorage(
+                    db_path='./memory/ltm.db'
+                )
+            ),
+            short_term_memory = ShortTermMemory(
+                storage = RAGStorage(
+                    embedder_config={
+                        "provider": "openai",
+                        "config": {
+                            "model": "text-embedding-3-small"
+                        }
+                    },
+                    type="short_term",
+                    path="./memory/"
+                )
+            ),
+            entity_memory = EntityMemory(
+                storage = RAGStorage(
+                    embedder_config={
+                        "provider": "openai",
+                        "config":{
+                            "model": "text-embedding-3-small"
+                        }
+                    },
+                    type="short_term",
+                    path="./memory/"
+                )
+            ),
         )
     

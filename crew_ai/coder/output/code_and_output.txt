@@ -1,0 +1,18 @@
+"""# Code to calculate the series
+total_sum = 0
+terms = 10000
+
+for n in range(terms):
+    denominator = 2 * n + 1
+    if n % 2 == 0:
+        total_sum += 1 / denominator
+    else:
+        total_sum -= 1 / denominator
+
+# Multiply by 4
+result = total_sum * 4
+print(result)
+
+# Output of the code
+3.1414926535900345
+"""
